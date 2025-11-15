@@ -53,7 +53,29 @@ for(i in 1:length(files)){
   if(i%%100==0) print(i)
 }
 dat<-rbindlist(datList)
-dat<-as.data.frame(dat)
+
+dat$point_loc<-paste0("POINT (", dat$dec_long_va," ", dat$dec_lat_va, ")")
+
+# table(str_length(dat$lev_dt)) check this
+dat$year<-NA
+dat$year[str_length(dat$lev_dt)==4]<-as.numeric(dat$lev_dt[str_length(dat$lev_dt)==4])
+dat$year[str_length(dat$lev_dt)==7]<-as.numeric(substr(dat$lev_dt[str_length(dat$lev_dt)==7],start=1,stop=4))
+dat$year[str_length(dat$lev_dt)==10]<-year(dat$lev_dt[str_length(dat$lev_dt)==10])
+
+dat$month<-NA
+dat$month[str_length(dat$lev_dt)==7]<-as.numeric(substr(dat$lev_dt[str_length(dat$lev_dt)==7],start=6,stop=7))
+dat$month[str_length(dat$lev_dt)==10]<-month(dat$lev_dt[str_length(dat$lev_dt)==10])
+
+dat$day<-NA
+dat$day[str_length(dat$lev_dt)==10]<-day(dat$lev_dt[str_length(dat$lev_dt)==10])
+
+dat$date<-paste0(dat$year,"-",dat$month,"-",dat$day)
+substr(dat$date[substr(dat$date,start=6,stop=7)=="NA"],start = 6,stop=7)<-"06"
+substr(dat$date[substr(dat$date,start=9,stop=10)=="NA"],start = 9,stop=10)<-"15"
+
+dat$date<-as.character(as.Date(dat$date))
+dat$lev_dt<-NULL
+
 write.csv(dat,"C:/Users/joeja/Desktop/research_postdoc/digital_twin_data/wtd/USGS_well_obs.csv",row.names = F)
 
 
