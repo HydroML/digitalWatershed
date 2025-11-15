@@ -36,6 +36,7 @@ foreach(i=1:nrow(AllSites),.packages='dataRetrieval') %dopar% {
   siteinfo<-attr(gw, "siteInfo")[1,,drop=F]
   if(sum(!is.na(gw$lev_va))>0 | (sum(!is.na(siteinfo$aqfr_type_cd))>0 & sum(!is.na(siteinfo$well_depth_va))>0)  ){
     dat<-cbind(gw,siteinfo)
+    
     dat<-dat[,c("lev_dt","lev_va","lev_acy_cd","dec_lat_va","dec_long_va","reliability_cd","aqfr_type_cd","well_depth_va","hole_depth_va","coord_acy_cd","dec_coord_datum_cd","alt_va","alt_acy_va","parameter_cd")]
     saveRDS(dat,file = paste0("C:/Users/joeja/Desktop/research_postdoc/digital_twin_data/wtd/USGS_Rds/Site",i,".Rds"))
   }
@@ -75,6 +76,8 @@ substr(dat$date[substr(dat$date,start=9,stop=10)=="NA"],start = 9,stop=10)<-"15"
 
 dat$date<-as.character(as.Date(dat$date))
 dat$lev_dt<-NULL
+
+dat$hole_depth_va<-as.numeric(dat$hole_depth_va)
 
 write.csv(dat,"C:/Users/joeja/Desktop/research_postdoc/digital_twin_data/wtd/USGS_well_obs.csv",row.names = F)
 
